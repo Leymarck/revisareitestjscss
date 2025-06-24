@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revisarei.com</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #c94f4f;
+      color: white;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+      font-weight: bold;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    label {
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .resultado {
+      text-align: center;
+      font-size: 1.2rem;
+      margin-top: 20px;
+    }
+
+    .valor {
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+
+    .instrucoes {
+      background: white;
+      color: black;
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background-color: white;
+      color: #c94f4f;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: 0.3s;
+    }
+
+    a {
+      text-decoration: none;
+        color: inherit; 
+    }
+
+    button:hover {
+      background-color: #f8d7da;
+    }
+
+    @media (max-width: 500px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .valor {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Revisarei.com</h1>
+  <div class="container">
+    <div class="input-group">
+      <label for="tipo">Tipo</label>
+      <select id="tipo">
+        <option value="">Selecione</option>
+        <option value="TCC">TCC</option>
+        <option value="Redação">Redação (Enem)</option>
+        <option value="Dissertação">Dissertação (Mestrado)</option>
+        <option value="Tese">Tese (Doutorado)</option>
+        <option value="Outro">Outro</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <label for="qtdPaginas">Quantidade de Páginas</label>
+      <input type="number" id="qtdPaginas" min="0">
+    </div>
+
+    <div class="input-group">
+      <label for="precoPagina">Preço por Página (R$)</label>
+      <input type="number" id="precoPagina" min="0" step="0.01">
+    </div>
+
+    <div class="input-group">
+      <label>Diagramação</label>
+      <div class="radio-group">
+        <div class="radio-option">
+          <input type="radio" name="diagrama" id="diagramaSim">
+          <label for="diagramaSim">Sim</label>
+        </div>
+        <div class="radio-option">
+          <input type="radio" name="diagrama" id="diagramaNao" checked>
+          <label for="diagramaNao">Não</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-group" id="precoDiagramaContainer" style="display: none;">
+      <label for="precoDiagrama">Preço da Diagramação (R$)</label>
+      <input type="number" id="precoDiagrama" min="0" step="0.01">
+    </div>
+
+    <div class="resultado">
+      <p>Custo do Serviço</p>
+      <div class="valor" id="resultado">R$ 0,00</div>
+    </div>
+  </div>
+
+
+  <button> <a href="orçamento.html"> Criar Pacote </a> </button>
+
+  <div class="instrucoes">
+    <h3>INSTRUÇÕES</h3>
+    <ol>
+      <li>Informe o tipo de texto: selecione o tipo de texto que será revisado (ex.: TCC, Dissertação, Tese, etc.).</li>
+      <li>Quantidade de páginas: insira o número total de páginas do documento.</li>
+      <li>Defina o valor por página: estabeleça o preço que você cobrará por página revisada.</li>
+      <li>Formatação e diagramação:
+        <ul>
+          <li>Caso o serviço inclua formatação e/ou diagramação, marque a opção correspondente.</li>
+          <li>Informe o valor adicional para a formatação e/ou diagramação.</li>
+        </ul>
+      </li>
+    </ol>
+  </div>
+
+  <script>
+    function calcularValorTotal(paginas, precoPorPagina, diagrama, precoDiagrama) {
+      const totalPaginas = paginas * precoPorPagina;
+      const totalDiagrama = diagrama ? precoDiagrama : 0;
+      return totalPaginas + totalDiagrama;
+    }
+
+    function formatarParaBRL(valor) {
+      return valor.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      });
+    }
+
+    function atualizarCustoTotal() {
+      const precoPagina = parseFloat(document.getElementById('precoPagina').value) || 0;
+      const qtdPaginas = parseInt(document.getElementById('qtdPaginas').value) || 0;
+      const incluirDiagrama = document.getElementById('diagramaSim').checked;
+      const precoDiagrama = parseFloat(document.getElementById('precoDiagrama').value) || 0;
+
+      const total = calcularValorTotal(qtdPaginas, precoPagina, incluirDiagrama, precoDiagrama);
+      document.getElementById('resultado').textContent = formatarParaBRL(total);
+    }
+
+    function alternarCampoDiagrama() {
+      const mostrar = document.getElementById('diagramaSim').checked;
+      const campo = document.getElementById('precoDiagramaContainer');
+      campo.style.display = mostrar ? 'block' : 'none';
+      atualizarCustoTotal();
+    }
+
+    function inicializarEventos() {
+      document.getElementById('precoPagina').addEventListener('input', atualizarCustoTotal);
+      document.getElementById('qtdPaginas').addEventListener('input', atualizarCustoTotal);
+      document.getElementById('precoDiagrama').addEventListener('input', atualizarCustoTotal);
+      document.getElementById('diagramaSim').addEventListener('change', alternarCampoDiagrama);
+      document.getElementById('diagramaNao').addEventListener('change', alternarCampoDiagrama);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      alternarCampoDiagrama();
+      inicializarEventos();
+    });
+  </script>
+</body>
+</html>
